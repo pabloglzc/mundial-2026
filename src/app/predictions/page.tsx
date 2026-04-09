@@ -8,13 +8,16 @@ import { matchesService } from '@/services/matches.service';
 import { predictionsService } from '@/services/predictions.service';
 import { Match, Prediction } from '@/services/types';
 import { groups, getFlagUrl } from '@/data/teams';
+import { sourceLabel } from '@/data/knockout-bracket';
 import { formatDate, formatTime, isMatchStarted } from '@/lib/utils';
 import { getPointsLabel } from '@/lib/scoring';
+import { ALL_STAGES, STAGE_LABELS, STAGE_FULL_LABELS } from '@/lib/constants';
 
 function PredictionsContent() {
   const { user } = useAuth();
   const [matches, setMatches] = useState<Match[]>([]);
   const [predictions, setPredictions] = useState<Record<number, Prediction>>({});
+  const [selectedStage, setSelectedStage] = useState<string>('GROUP_STAGE');
   const [selectedGroup, setSelectedGroup] = useState<string>('A');
   const [selectedMatchday, setSelectedMatchday] = useState<number>(1);
   const [scores, setScores] = useState<Record<number, { home: string; away: string }>>({});
@@ -33,7 +36,6 @@ function PredictionsContent() {
       preds.forEach(p => { map[p.matchId] = p; });
       setPredictions(map);
 
-      // Pre-fill scores from existing predictions
       const scoreMap: Record<number, { home: string; away: string }> = {};
       preds.forEach(p => {
         scoreMap[p.matchId] = { home: String(p.homeScore), away: String(p.awayScore) };
@@ -42,9 +44,9 @@ function PredictionsContent() {
     });
   }, [user]);
 
-  const filteredMatches = matches.filter(
-    m => m.group === selectedGroup && m.matchday === selectedMatchday
-  );
+  const filteredMatches = selectedStage === 'GROUP_STAGE'
+    ? matches.filter(m => m.group === selectedGroup && m.matchday === selectedMatchday)
+    : matches.filter(m => m.stage === selectedStage);
 
   const handleSave = async (matchId: number) => {
     if (!user) return;
@@ -67,6 +69,7 @@ function PredictionsContent() {
     if (!user) return;
     for (const match of filteredMatches) {
       if (isMatchStarted(match.utcDate)) continue;
+      if (match.homeTeam.id === 0 || match.awayTeam.id === 0) continue;
       const score = scores[match.id];
       if (score && score.home !== '' && score.away !== '') {
         await handleSave(match.id);
@@ -82,68 +85,108 @@ function PredictionsContent() {
     }));
   };
 
+  const isKnockout = selectedStage !== 'GROUP_STAGE';
+
   return (
     <div className="max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold text-gray-900 mb-2">Predicciones</h1>
-      <p className="text-gray-500 mb-8">Ingresa tu marcador para cada partido.</p>
+      <p className="text-gray-500 mb-6">Ingresa tu marcador para cada partido.</p>
 
-      {/* Filters */}
-      <div className="bg-white rounded-xl shadow p-4 mb-6">
-        <div className="flex flex-wrap gap-4 items-center">
-          <div>
-            <label className="text-sm font-medium text-gray-600 mr-2">Grupo:</label>
-            <select
-              value={selectedGroup}
-              onChange={e => setSelectedGroup(e.target.value)}
-              className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm text-gray-900"
-            >
-              {groups.map(g => (
-                <option key={g} value={g}>Grupo {g}</option>
-              ))}
-            </select>
-          </div>
-          <div className="flex gap-2">
-            {[1, 2, 3].map(md => (
-              <button
-                key={md}
-                onClick={() => setSelectedMatchday(md)}
-                className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                  selectedMatchday === md
-                    ? 'bg-primary text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
+      {/* Stage Tabs */}
+      <div className="flex gap-1 overflow-x-auto pb-2 mb-4">
+        {ALL_STAGES.map(stage => (
+          <button
+            key={stage}
+            onClick={() => setSelectedStage(stage)}
+            className={`px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+              selectedStage === stage
+                ? 'bg-primary text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            {STAGE_LABELS[stage]}
+          </button>
+        ))}
+      </div>
+
+      {/* Group Filters (only for group stage) */}
+      {!isKnockout && (
+        <div className="bg-white rounded-xl shadow p-4 mb-6">
+          <div className="flex flex-wrap gap-4 items-center">
+            <div>
+              <label className="text-sm font-medium text-gray-600 mr-2">Grupo:</label>
+              <select
+                value={selectedGroup}
+                onChange={e => setSelectedGroup(e.target.value)}
+                className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm text-gray-900"
               >
-                Jornada {md}
-              </button>
-            ))}
+                {groups.map(g => (
+                  <option key={g} value={g}>Grupo {g}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex gap-2">
+              {[1, 2, 3].map(md => (
+                <button
+                  key={md}
+                  onClick={() => setSelectedMatchday(md)}
+                  className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                    selectedMatchday === md
+                      ? 'bg-primary text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  Jornada {md}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={handleSaveAll}
+              className="ml-auto bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-1.5 rounded-lg text-sm transition-colors"
+            >
+              Guardar Todos
+            </button>
           </div>
+        </div>
+      )}
+
+      {/* Knockout header */}
+      {isKnockout && (
+        <div className="bg-white rounded-xl shadow p-4 mb-6 flex items-center justify-between">
+          <h2 className="text-lg font-bold text-gray-900">{STAGE_FULL_LABELS[selectedStage]}</h2>
           <button
             onClick={handleSaveAll}
-            className="ml-auto bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-1.5 rounded-lg text-sm transition-colors"
+            className="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-1.5 rounded-lg text-sm transition-colors"
           >
             Guardar Todos
           </button>
         </div>
-      </div>
+      )}
 
       {/* Matches */}
       <div className="space-y-4">
+        {filteredMatches.length === 0 && (
+          <div className="text-center py-12 text-gray-400">
+            No hay partidos en esta fase.
+          </div>
+        )}
         {filteredMatches.map(match => {
           const started = isMatchStarted(match.utcDate);
           const prediction = predictions[match.id];
           const finished = match.status === 'FINISHED';
           const score = scores[match.id] || { home: '', away: '' };
+          const isTBD = match.homeTeam.id === 0 || match.awayTeam.id === 0;
 
           return (
             <div
               key={match.id}
               className={`bg-white rounded-xl shadow p-4 ${
-                finished ? 'border-l-4 border-gray-300' : started ? 'border-l-4 border-amber-400' : ''
+                finished ? 'border-l-4 border-gray-300' : started ? 'border-l-4 border-amber-400' : isTBD ? 'opacity-60' : ''
               }`}
             >
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs text-gray-400">
-                  Grupo {match.group} &bull; Jornada {match.matchday}
+                  {match.group ? `Grupo ${match.group} \u2022 Jornada ${match.matchday}` : STAGE_FULL_LABELS[match.stage]}
                 </span>
                 <span className="text-xs text-gray-400">
                   {formatDate(match.utcDate)} &bull; {formatTime(match.utcDate)}
@@ -153,8 +196,12 @@ function PredictionsContent() {
               <div className="flex items-center gap-4">
                 {/* Home Team */}
                 <div className="flex items-center gap-2 flex-1 justify-end">
-                  <span className="text-sm font-semibold text-gray-800">{match.homeTeam.shortName}</span>
-                  <img src={getFlagUrl(match.homeTeam.flag)} alt="" className="w-8 h-5 object-cover rounded-sm" />
+                  <span className="text-sm font-semibold text-gray-800">
+                    {isTBD && match.homeTeamSource ? sourceLabel(match.homeTeamSource) : match.homeTeam.shortName}
+                  </span>
+                  {match.homeTeam.flag && (
+                    <img src={getFlagUrl(match.homeTeam.flag)} alt="" className="w-8 h-5 object-cover rounded-sm" />
+                  )}
                 </div>
 
                 {/* Score Inputs or Result */}
@@ -167,6 +214,8 @@ function PredictionsContent() {
                     </div>
                   ) : started ? (
                     <div className="text-sm text-amber-600 font-medium px-4">En juego</div>
+                  ) : isTBD ? (
+                    <div className="text-sm text-gray-400 font-medium px-4">vs</div>
                   ) : (
                     <>
                       <input
@@ -194,13 +243,17 @@ function PredictionsContent() {
 
                 {/* Away Team */}
                 <div className="flex items-center gap-2 flex-1">
-                  <img src={getFlagUrl(match.awayTeam.flag)} alt="" className="w-8 h-5 object-cover rounded-sm" />
-                  <span className="text-sm font-semibold text-gray-800">{match.awayTeam.shortName}</span>
+                  {match.awayTeam.flag && (
+                    <img src={getFlagUrl(match.awayTeam.flag)} alt="" className="w-8 h-5 object-cover rounded-sm" />
+                  )}
+                  <span className="text-sm font-semibold text-gray-800">
+                    {isTBD && match.awayTeamSource ? sourceLabel(match.awayTeamSource) : match.awayTeam.shortName}
+                  </span>
                 </div>
 
                 {/* Save Button */}
                 <div className="w-24 text-right">
-                  {!started && !finished && (
+                  {!started && !finished && !isTBD && (
                     <button
                       onClick={() => handleSave(match.id)}
                       disabled={saving === match.id || score.home === '' || score.away === ''}
@@ -225,7 +278,7 @@ function PredictionsContent() {
               )}
 
               {/* Existing prediction badge for scheduled matches */}
-              {!finished && prediction && !started && (
+              {!finished && prediction && !started && !isTBD && (
                 <div className="mt-2 text-xs text-green-600">
                   Predicción guardada: {prediction.homeScore} - {prediction.awayScore}
                 </div>

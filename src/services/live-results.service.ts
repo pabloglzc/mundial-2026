@@ -1,0 +1,68 @@
+import { Match } from './types';
+
+export interface LiveMatch {
+  id: number;
+  status: string;
+  minute: number | null;
+  homeTeam: { name: string; shortName: string; crest: string };
+  awayTeam: { name: string; shortName: string; crest: string };
+  homeScore: number | null;
+  awayScore: number | null;
+  utcDate: string;
+  stage: string;
+  group: string | null;
+}
+
+function todayDateString(): string {
+  const d = new Date();
+  return d.toISOString().split('T')[0];
+}
+
+export async function fetchTodayMatches(): Promise<LiveMatch[]> {
+  const today = todayDateString();
+  try {
+    const res = await fetch(
+      `/api/football-data?endpoint=competitions/WC/matches&dateFrom=${today}&dateTo=${today}`
+    );
+    const data = await res.json();
+
+    if (data.fallback || data.error || !data.matches) {
+      return [];
+    }
+
+    return data.matches.map((m: any) => ({
+      id: m.id,
+      status: m.status,
+      minute: m.minute ?? null,
+      homeTeam: {
+        name: m.homeTeam?.name || 'TBD',
+        shortName: m.homeTeam?.shortName || m.homeTeam?.tla || 'TBD',
+        crest: m.homeTeam?.crest || '',
+      },
+      awayTeam: {
+        name: m.awayTeam?.name || 'TBD',
+        shortName: m.awayTeam?.shortName || m.awayTeam?.tla || 'TBD',
+        crest: m.awayTeam?.crest || '',
+      },
+      homeScore: m.score?.fullTime?.home ?? m.score?.halfTime?.home ?? null,
+      awayScore: m.score?.fullTime?.away ?? m.score?.halfTime?.away ?? null,
+      utcDate: m.utcDate,
+      stage: m.stage || '',
+      group: m.group || null,
+    }));
+  } catch {
+    return [];
+  }
+}
+
+// Fallback: show local matches for today from localStorage data
+export function getLocalTodayMatches(matches: Match[]): Match[] {
+  const today = todayDateString();
+  return matches.filter(m => m.utcDate.startsWith(today))
+    .sort((a, b) => a.utcDate.localeCompare(b.utcDate));
+}
+
+export const liveResultsService = {
+  fetchTodayMatches,
+  getLocalTodayMatches,
+};

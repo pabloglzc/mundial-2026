@@ -20,7 +20,7 @@ export interface Team {
 export interface Match {
   id: number;
   utcDate: string;
-  status: 'SCHEDULED' | 'IN_PLAY' | 'FINISHED' | 'POSTPONED';
+  status: 'SCHEDULED' | 'IN_PLAY' | 'HALF_TIME' | 'FINISHED' | 'POSTPONED';
   matchday: number;
   stage: 'GROUP_STAGE' | 'ROUND_OF_32' | 'ROUND_OF_16' | 'QUARTER_FINALS' | 'SEMI_FINALS' | 'THIRD_PLACE' | 'FINAL';
   group: string | null;
@@ -29,6 +29,24 @@ export interface Match {
   homeScore: number | null;
   awayScore: number | null;
   venue: string;
+  bracketPosition?: number;
+  homeTeamSource?: string;
+  awayTeamSource?: string;
+}
+
+export interface GroupStanding {
+  teamId: number;
+  teamName: string;
+  teamFlag: string;
+  group: string;
+  played: number;
+  won: number;
+  drawn: number;
+  lost: number;
+  goalsFor: number;
+  goalsAgainst: number;
+  goalDifference: number;
+  points: number;
 }
 
 export interface TeamRef {

@@ -1,5 +1,6 @@
 import { Match } from '@/services/types';
 import { teams } from './teams';
+import { KNOCKOUT_BRACKET, TBD_TEAM } from './knockout-bracket';
 
 function teamRef(teamId: number) {
   const t = teams.find(t => t.id === teamId)!;
@@ -80,7 +81,38 @@ function generateGroupMatches(): Match[] {
   return matches;
 }
 
-export const mockMatches: Match[] = generateGroupMatches();
+function generateKnockoutMatches(): Match[] {
+  // Knockout starts around July 1, 2026
+  const knockoutStart = new Date('2026-07-01T00:00:00Z');
+
+  return KNOCKOUT_BRACKET.map(slot => {
+    const matchDate = new Date(knockoutStart);
+    matchDate.setDate(matchDate.getDate() + slot.dayOffset);
+    matchDate.setUTCHours(slot.hourUTC, 0, 0, 0);
+
+    return {
+      id: slot.matchId,
+      utcDate: matchDate.toISOString(),
+      status: 'SCHEDULED' as const,
+      matchday: slot.stage === 'ROUND_OF_32' ? 4
+        : slot.stage === 'ROUND_OF_16' ? 5
+        : slot.stage === 'QUARTER_FINALS' ? 6
+        : slot.stage === 'SEMI_FINALS' ? 7 : 8,
+      stage: slot.stage,
+      group: null,
+      homeTeam: { ...TBD_TEAM },
+      awayTeam: { ...TBD_TEAM },
+      homeScore: null,
+      awayScore: null,
+      venue: slot.venue,
+      bracketPosition: slot.bracketPosition,
+      homeTeamSource: slot.homeSource,
+      awayTeamSource: slot.awaySource,
+    };
+  });
+}
+
+export const mockMatches: Match[] = [...generateGroupMatches(), ...generateKnockoutMatches()];
 
 export function getMatchesByGroup(group: string): Match[] {
   return mockMatches.filter(m => m.group === group);

@@ -22,6 +22,9 @@ export default function Navbar() {
             <Link href="/leaderboard" className="hover:text-brand-green transition-colors">
               Tabla de Posiciones
             </Link>
+            <Link href="/results" className="hover:text-brand-green transition-colors">
+              Resultados
+            </Link>
             {user ? (
               <>
                 <Link href="/dashboard" className="hover:text-brand-green transition-colors">
@@ -83,6 +86,9 @@ export default function Navbar() {
           <div className="md:hidden pb-4 space-y-2">
             <Link href="/leaderboard" className="block py-2 hover:text-brand-green" onClick={() => setMenuOpen(false)}>
               Tabla de Posiciones
+            </Link>
+            <Link href="/results" className="block py-2 hover:text-brand-green" onClick={() => setMenuOpen(false)}>
+              Resultados
             </Link>
             {user ? (
               <>
