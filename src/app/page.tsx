@@ -1,65 +1,132 @@
-import Image from "next/image";
+'use client';
+
+import Link from 'next/link';
+import { teams, groups, getFlagUrl } from '@/data/teams';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Home() {
+  const { user } = useAuth();
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div>
+      {/* Hero */}
+      <section className="bg-gradient-to-br from-[#56042C] via-[#7B0A3E] to-[#2D0217] text-white py-20 px-4">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-5xl md:text-7xl font-extrabold mb-4">
+            Mundial 2026
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-xl md:text-2xl text-white/80 mb-2">
+            FIFA World Cup 2026™
           </p>
+          <p className="text-lg text-amber-300 mb-8">
+            EE.UU. &bull; México &bull; Canadá &mdash; 11 Jun - 19 Jul
+          </p>
+          <p className="text-lg text-white/90 mb-10 max-w-2xl mx-auto">
+            Predice los marcadores de los 104 partidos del mundial.
+            <br />
+            <strong className="text-amber-300">3 puntos</strong> por marcador exacto &bull;{' '}
+            <strong className="text-amber-300">1 punto</strong> por acertar ganador.
+          </p>
+          {!user ? (
+            <div className="flex gap-4 justify-center flex-wrap">
+              <Link
+                href="/register"
+                className="bg-amber-500 hover:bg-amber-400 text-black font-bold px-8 py-3 rounded-lg text-lg transition-colors"
+              >
+                Registrarse — $500 MXN
+              </Link>
+              <Link
+                href="/login"
+                className="bg-white/10 hover:bg-white/20 text-white font-semibold px-8 py-3 rounded-lg text-lg transition-colors"
+              >
+                Iniciar Sesión
+              </Link>
+            </div>
+          ) : (
+            <Link
+              href="/predictions"
+              className="bg-amber-500 hover:bg-amber-400 text-black font-bold px-8 py-3 rounded-lg text-lg transition-colors inline-block"
+            >
+              Ir a Predicciones
+            </Link>
+          )}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* How it works */}
+      <section className="py-16 px-4 max-w-5xl mx-auto">
+        <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">¿Cómo funciona?</h2>
+        <div className="grid md:grid-cols-3 gap-8">
+          <div className="bg-white rounded-xl shadow-md p-6 text-center">
+            <div className="text-4xl mb-4">📝</div>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">1. Regístrate y Paga</h3>
+            <p className="text-gray-600">
+              Crea tu cuenta y realiza el pago de $500 MXN vía MercadoPago para participar.
+            </p>
+          </div>
+          <div className="bg-white rounded-xl shadow-md p-6 text-center">
+            <div className="text-4xl mb-4">⚽</div>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">2. Predice Marcadores</h3>
+            <p className="text-gray-600">
+              Ingresa tu predicción del marcador para cada partido antes de que comience.
+            </p>
+          </div>
+          <div className="bg-white rounded-xl shadow-md p-6 text-center">
+            <div className="text-4xl mb-4">🏆</div>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">3. Gana Puntos</h3>
+            <p className="text-gray-600">
+              3 pts por marcador exacto, 1 pt por acertar el resultado. El que más puntos acumule, gana.
+            </p>
+          </div>
         </div>
-      </main>
+      </section>
+
+      {/* Groups */}
+      <section className="py-16 px-4 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">Grupos</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {groups.map(group => {
+              const groupTeams = teams.filter(t => t.group === group);
+              return (
+                <div key={group} className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                  <h3 className="text-lg font-bold text-[#56042C] mb-3 text-center">
+                    Grupo {group}
+                  </h3>
+                  <div className="space-y-2">
+                    {groupTeams.map(team => (
+                      <div key={team.id} className="flex items-center gap-2">
+                        <img
+                          src={getFlagUrl(team.flag)}
+                          alt={team.name}
+                          className="w-6 h-4 object-cover rounded-sm"
+                        />
+                        <span className="text-sm text-gray-700">{team.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      {!user && (
+        <section className="py-16 px-4 bg-[#56042C] text-white text-center">
+          <h2 className="text-3xl font-bold mb-4">¿Listo para participar?</h2>
+          <p className="text-lg text-white/80 mb-8">
+            Inscríbete ahora y demuestra que sabes de futbol.
+          </p>
+          <Link
+            href="/register"
+            className="bg-amber-500 hover:bg-amber-400 text-black font-bold px-8 py-3 rounded-lg text-lg transition-colors inline-block"
+          >
+            Registrarse — $500 MXN
+          </Link>
+        </section>
+      )}
     </div>
   );
 }
