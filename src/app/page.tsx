@@ -13,7 +13,7 @@ export default function Home() {
       <section className="bg-white py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <img
-            src="/fifa-wc-2026-logo.png"
+            src="/fifa-wc-2026-logo.jpg"
             alt="FIFA World Cup 2026"
             className="mx-auto mb-8 w-36 md:w-44"
           />
