@@ -4,34 +4,54 @@ import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { matchesService } from '@/services/matches.service';
 import { predictionsService } from '@/services/predictions.service';
-import { fetchTodayMatches, getLocalTodayMatches, LiveMatch } from '@/services/live-results.service';
+import {
+  fetchTodayMatches,
+  fetchUpcomingMatches,
+  fetchTodayAllCompetitions,
+  getLocalTodayMatches,
+  LiveMatch,
+} from '@/services/live-results.service';
 import { Match, Prediction } from '@/services/types';
 import { getFlagUrl } from '@/data/teams';
-import { formatTime, getMatchStatusLabel, isMatchLive } from '@/lib/utils';
+import { formatTime, formatDate, getMatchStatusLabel, isMatchLive } from '@/lib/utils';
 import { LIVE_REFRESH_INTERVAL_MS, STAGE_FULL_LABELS } from '@/lib/constants';
+
+type Tab = 'today' | 'upcoming';
 
 export default function ResultsPage() {
   const { user } = useAuth();
-  const [liveMatches, setLiveMatches] = useState<LiveMatch[]>([]);
+  const [tab, setTab] = useState<Tab>('today');
+  const [todayWCMatches, setTodayWCMatches] = useState<LiveMatch[]>([]);
+  const [todayAllMatches, setTodayAllMatches] = useState<LiveMatch[]>([]);
+  const [upcomingMatches, setUpcomingMatches] = useState<LiveMatch[]>([]);
   const [localMatches, setLocalMatches] = useState<Match[]>([]);
   const [predictions, setPredictions] = useState<Record<number, Prediction>>({});
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [loading, setLoading] = useState(true);
-  const [usingFallback, setUsingFallback] = useState(false);
+  const [apiAvailable, setApiAvailable] = useState(false);
 
   const refresh = useCallback(async () => {
     // Try live API first
-    const live = await fetchTodayMatches();
-    if (live.length > 0) {
-      setLiveMatches(live);
-      setUsingFallback(false);
+    const [wcToday, allToday, upcoming] = await Promise.all([
+      fetchTodayMatches(),
+      fetchTodayAllCompetitions(),
+      fetchUpcomingMatches(),
+    ]);
+
+    const hasApi = wcToday.length > 0 || allToday.length > 0 || upcoming.length > 0;
+    setApiAvailable(hasApi);
+
+    if (hasApi) {
+      setTodayWCMatches(wcToday);
+      setTodayAllMatches(allToday);
+      setUpcomingMatches(upcoming);
     } else {
       // Fallback to local data
       const allMatches = await matchesService.getAllMatches();
       const todayLocal = getLocalTodayMatches(allMatches);
       setLocalMatches(todayLocal);
-      setUsingFallback(true);
     }
+
     setLastRefresh(new Date());
     setLoading(false);
   }, []);
@@ -57,13 +77,20 @@ export default function ResultsPage() {
     IN_PLAY: 0, PAUSED: 0, HALF_TIME: 1, TIMED: 2, SCHEDULED: 2, FINISHED: 3, POSTPONED: 4,
   };
 
-  const sortedLive = [...liveMatches].sort((a, b) =>
-    (statusOrder[a.status] ?? 5) - (statusOrder[b.status] ?? 5) || a.utcDate.localeCompare(b.utcDate)
-  );
+  const sortMatches = (matches: LiveMatch[]) =>
+    [...matches].sort((a, b) =>
+      (statusOrder[a.status] ?? 5) - (statusOrder[b.status] ?? 5) || a.utcDate.localeCompare(b.utcDate)
+    );
 
   const sortedLocal = [...localMatches].sort((a, b) =>
     (statusOrder[a.status] ?? 5) - (statusOrder[b.status] ?? 5) || a.utcDate.localeCompare(b.utcDate)
   );
+
+  // Combine WC + all matches for today tab, WC first
+  const todayMatches = sortMatches([
+    ...todayWCMatches,
+    ...todayAllMatches.filter(m => !todayWCMatches.some(wc => wc.id === m.id)),
+  ]);
 
   return (
     <div className="py-12 px-4">
@@ -77,17 +104,43 @@ export default function ResultsPage() {
             Actualizar
           </button>
         </div>
-        <p className="text-gray-500 mb-1">Partidos de hoy y resultados recientes.</p>
-        <p className="text-xs text-gray-400 mb-8">
+        <p className="text-gray-500 mb-1">Resultados en vivo y próximos partidos.</p>
+        <p className="text-xs text-gray-400 mb-6">
           Última actualización: {lastRefresh.toLocaleTimeString('es-MX')}
-          {usingFallback && ' (datos locales)'}
+          {!apiAvailable && !loading && ' (datos locales)'}
         </p>
+
+        {/* Tabs */}
+        {apiAvailable && (
+          <div className="flex gap-2 mb-6">
+            <button
+              onClick={() => setTab('today')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                tab === 'today'
+                  ? 'bg-primary text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              Hoy
+            </button>
+            <button
+              onClick={() => setTab('upcoming')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                tab === 'upcoming'
+                  ? 'bg-primary text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              Próximos del Mundial
+            </button>
+          </div>
+        )}
 
         {loading ? (
           <div className="flex justify-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
           </div>
-        ) : usingFallback ? (
+        ) : !apiAvailable ? (
           // Fallback: show local matches
           sortedLocal.length === 0 ? (
             <div className="bg-white rounded-xl shadow-lg p-12 text-center">
@@ -102,18 +155,34 @@ export default function ResultsPage() {
               ))}
             </div>
           )
-        ) : (
-          // Live API data
-          sortedLive.length === 0 ? (
+        ) : tab === 'today' ? (
+          // Today's matches from all competitions
+          todayMatches.length === 0 ? (
             <div className="bg-white rounded-xl shadow-lg p-12 text-center">
               <div className="text-5xl mb-4">📺</div>
               <h2 className="text-xl font-bold text-gray-900 mb-2">Sin partidos hoy</h2>
-              <p className="text-gray-500">No hay partidos del Mundial programados para hoy.</p>
+              <p className="text-gray-500">No hay partidos programados para hoy.</p>
+              <p className="text-gray-400 text-sm mt-2">Revisa la pestaña "Próximos del Mundial" para ver los siguientes partidos.</p>
             </div>
           ) : (
             <div className="space-y-3">
-              {sortedLive.map(match => (
-                <LiveMatchCard key={match.id} match={match} />
+              {todayMatches.map(match => (
+                <LiveMatchCard key={match.id} match={match} showCompetition />
+              ))}
+            </div>
+          )
+        ) : (
+          // Upcoming WC matches
+          upcomingMatches.length === 0 ? (
+            <div className="bg-white rounded-xl shadow-lg p-12 text-center">
+              <div className="text-5xl mb-4">🏟️</div>
+              <h2 className="text-xl font-bold text-gray-900 mb-2">Calendario aún no disponible</h2>
+              <p className="text-gray-500">Los partidos del Mundial se publicarán pronto.</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {upcomingMatches.map(match => (
+                <LiveMatchCard key={match.id} match={match} showDate />
               ))}
             </div>
           )
@@ -123,11 +192,12 @@ export default function ResultsPage() {
   );
 }
 
-function LiveMatchCard({ match }: { match: LiveMatch }) {
+function LiveMatchCard({ match, showCompetition, showDate }: { match: LiveMatch; showCompetition?: boolean; showDate?: boolean }) {
   const live = isMatchLive(match.status);
+  const finished = match.status === 'FINISHED';
 
   return (
-    <div className={`bg-white rounded-xl shadow p-4 ${live ? 'border-l-4 border-green-500' : ''}`}>
+    <div className={`bg-white rounded-xl shadow p-4 ${live ? 'border-l-4 border-green-500' : finished ? 'border-l-4 border-gray-300' : ''}`}>
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           {live && (
@@ -136,12 +206,17 @@ function LiveMatchCard({ match }: { match: LiveMatch }) {
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
             </span>
           )}
-          <span className={`text-xs font-medium ${live ? 'text-green-600' : match.status === 'HALF_TIME' ? 'text-amber-600' : 'text-gray-400'}`}>
-            {getMatchStatusLabel(match.status)}
+          <span className={`text-xs font-medium ${live ? 'text-green-600' : finished ? 'text-gray-500' : 'text-gray-400'}`}>
+            {finished ? 'Finalizado' : getMatchStatusLabel(match.status)}
             {match.minute ? ` ${match.minute}'` : ''}
           </span>
+          {showCompetition && match.competition && (
+            <span className="text-xs text-gray-300 ml-1">• {match.competition}</span>
+          )}
         </div>
-        <span className="text-xs text-gray-400">{formatTime(match.utcDate)}</span>
+        <span className="text-xs text-gray-400">
+          {showDate ? formatDate(match.utcDate) + ' • ' : ''}{formatTime(match.utcDate)}
+        </span>
       </div>
 
       <div className="flex items-center gap-4">
@@ -160,7 +235,7 @@ function LiveMatchCard({ match }: { match: LiveMatch }) {
               <span className="text-2xl font-bold text-gray-900">{match.awayScore}</span>
             </>
           ) : (
-            <span className="text-sm text-gray-400">{formatTime(match.utcDate)}</span>
+            <span className="text-sm text-gray-400">vs</span>
           )}
         </div>
 
