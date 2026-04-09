@@ -10,13 +10,12 @@ export default function Home() {
   return (
     <div>
       {/* Hero */}
-      <section className="bg-gradient-to-br from-brand-green via-primary to-brand-red text-white py-20 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <img
-            src="/fifa-wc-2026-logo.png"
-            alt="FIFA World Cup 2026"
-            className="mx-auto mb-6 w-40 md:w-52 drop-shadow-lg"
-          />
+      <section
+        className="relative text-white py-20 px-4 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/fifa-wc-2026-logo.png')" }}
+      >
+        <div className="absolute inset-0 bg-primary/80"></div>
+        <div className="relative max-w-4xl mx-auto text-center">
           <h1 className="text-5xl md:text-7xl font-extrabold mb-4">
             Mundial 2026
           </h1>
