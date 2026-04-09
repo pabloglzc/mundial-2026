@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <div>
       {/* Hero */}
-      <section className="bg-gradient-to-br from-[#56042C] via-[#7B0A3E] to-[#2D0217] text-white py-20 px-4">
+      <section className="bg-gradient-to-br from-brand-green via-primary to-brand-red text-white py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-5xl md:text-7xl font-extrabold mb-4">
             Mundial 2026
@@ -18,20 +18,20 @@ export default function Home() {
           <p className="text-xl md:text-2xl text-white/80 mb-2">
             FIFA World Cup 2026™
           </p>
-          <p className="text-lg text-amber-300 mb-8">
+          <p className="text-lg text-yellow-300 mb-8">
             EE.UU. &bull; México &bull; Canadá &mdash; 11 Jun - 19 Jul
           </p>
           <p className="text-lg text-white/90 mb-10 max-w-2xl mx-auto">
             Predice los marcadores de los 104 partidos del mundial.
             <br />
-            <strong className="text-amber-300">3 puntos</strong> por marcador exacto &bull;{' '}
-            <strong className="text-amber-300">1 punto</strong> por acertar ganador.
+            <strong className="text-yellow-300">3 puntos</strong> por marcador exacto &bull;{' '}
+            <strong className="text-yellow-300">1 punto</strong> por acertar ganador.
           </p>
           {!user ? (
             <div className="flex gap-4 justify-center flex-wrap">
               <Link
                 href="/register"
-                className="bg-amber-500 hover:bg-amber-400 text-black font-bold px-8 py-3 rounded-lg text-lg transition-colors"
+                className="bg-white hover:bg-brand-gray-light text-primary font-bold px-8 py-3 rounded-lg text-lg transition-colors"
               >
                 Registrarse — $500 MXN
               </Link>
@@ -45,7 +45,7 @@ export default function Home() {
           ) : (
             <Link
               href="/predictions"
-              className="bg-amber-500 hover:bg-amber-400 text-black font-bold px-8 py-3 rounded-lg text-lg transition-colors inline-block"
+              className="bg-white hover:bg-brand-gray-light text-primary font-bold px-8 py-3 rounded-lg text-lg transition-colors inline-block"
             >
               Ir a Predicciones
             </Link>
@@ -90,7 +90,7 @@ export default function Home() {
               const groupTeams = teams.filter(t => t.group === group);
               return (
                 <div key={group} className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                  <h3 className="text-lg font-bold text-[#56042C] mb-3 text-center">
+                  <h3 className="text-lg font-bold text-primary mb-3 text-center">
                     Grupo {group}
                   </h3>
                   <div className="space-y-2">
@@ -114,14 +114,14 @@ export default function Home() {
 
       {/* CTA */}
       {!user && (
-        <section className="py-16 px-4 bg-[#56042C] text-white text-center">
+        <section className="py-16 px-4 bg-primary text-white text-center">
           <h2 className="text-3xl font-bold mb-4">¿Listo para participar?</h2>
           <p className="text-lg text-white/80 mb-8">
             Inscríbete ahora y demuestra que sabes de futbol.
           </p>
           <Link
             href="/register"
-            className="bg-amber-500 hover:bg-amber-400 text-black font-bold px-8 py-3 rounded-lg text-lg transition-colors inline-block"
+            className="bg-white hover:bg-brand-gray-light text-primary font-bold px-8 py-3 rounded-lg text-lg transition-colors inline-block"
           >
             Registrarse — $500 MXN
           </Link>

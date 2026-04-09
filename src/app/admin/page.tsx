@@ -43,7 +43,7 @@ function AdminContent() {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <div className="bg-white rounded-xl shadow p-6 text-center">
-          <p className="text-3xl font-bold text-[#56042C]">{stats.users}</p>
+          <p className="text-3xl font-bold text-primary">{stats.users}</p>
           <p className="text-sm text-gray-500">Usuarios</p>
         </div>
         <div className="bg-white rounded-xl shadow p-6 text-center">
@@ -66,7 +66,7 @@ function AdminContent() {
           className="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow group"
         >
           <div className="text-4xl mb-4">⚽</div>
-          <h2 className="text-xl font-bold text-gray-900 group-hover:text-[#56042C] transition-colors">
+          <h2 className="text-xl font-bold text-gray-900 group-hover:text-primary transition-colors">
             Capturar Resultados
           </h2>
           <p className="text-gray-500 mt-2">
@@ -79,7 +79,7 @@ function AdminContent() {
           className="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow group"
         >
           <div className="text-4xl mb-4">💳</div>
-          <h2 className="text-xl font-bold text-gray-900 group-hover:text-[#56042C] transition-colors">
+          <h2 className="text-xl font-bold text-gray-900 group-hover:text-primary transition-colors">
             Verificar Pagos
           </h2>
           <p className="text-gray-500 mt-2">

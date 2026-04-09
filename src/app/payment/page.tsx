@@ -42,7 +42,7 @@ function PaymentContent() {
           <p className="text-gray-600 mb-6">Tu pago ha sido confirmado. Ya puedes hacer tus predicciones.</p>
           <button
             onClick={() => router.push('/predictions')}
-            className="bg-[#56042C] text-white font-semibold px-6 py-3 rounded-lg hover:bg-[#6d0538] transition-colors"
+            className="bg-primary text-white font-semibold px-6 py-3 rounded-lg hover:bg-primary-hover transition-colors"
           >
             Ir a Predicciones
           </button>

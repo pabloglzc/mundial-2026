@@ -66,11 +66,11 @@ function DashboardContent() {
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4 mb-8">
         <div className="bg-white rounded-xl shadow p-6 text-center">
-          <p className="text-3xl font-bold text-[#56042C]">{stats.points}</p>
+          <p className="text-3xl font-bold text-primary">{stats.points}</p>
           <p className="text-sm text-gray-500">Puntos</p>
         </div>
         <div className="bg-white rounded-xl shadow p-6 text-center">
-          <p className="text-3xl font-bold text-[#56042C]">{stats.predictions}</p>
+          <p className="text-3xl font-bold text-primary">{stats.predictions}</p>
           <p className="text-sm text-gray-500">Predicciones</p>
         </div>
         <div className="bg-white rounded-xl shadow p-6 text-center">
@@ -84,7 +84,7 @@ function DashboardContent() {
         <div className="bg-white rounded-xl shadow p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-bold text-gray-900">Próximos Partidos</h2>
-            <Link href="/predictions" className="text-sm text-[#56042C] hover:underline">Ver todos</Link>
+            <Link href="/predictions" className="text-sm text-primary hover:underline">Ver todos</Link>
           </div>
           {upcoming.length === 0 ? (
             <p className="text-gray-400 text-sm">No hay partidos próximos.</p>
@@ -114,7 +114,7 @@ function DashboardContent() {
         <div className="bg-white rounded-xl shadow p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-bold text-gray-900">Top 5</h2>
-            <Link href="/leaderboard" className="text-sm text-[#56042C] hover:underline">Ver tabla</Link>
+            <Link href="/leaderboard" className="text-sm text-primary hover:underline">Ver tabla</Link>
           </div>
           {topLeaderboard.length === 0 ? (
             <p className="text-gray-400 text-sm">Aún no hay datos en la tabla.</p>
@@ -124,14 +124,14 @@ function DashboardContent() {
                 <div
                   key={entry.userId}
                   className={`flex items-center justify-between py-2 px-3 rounded-lg ${
-                    entry.userId === user.id ? 'bg-amber-50' : ''
+                    entry.userId === user.id ? 'bg-primary/5' : ''
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-sm font-bold text-gray-400 w-5">{entry.rank}</span>
                     <span className="text-sm font-medium text-gray-700">{entry.userName}</span>
                   </div>
-                  <span className="text-sm font-bold text-[#56042C]">{entry.totalPoints} pts</span>
+                  <span className="text-sm font-bold text-primary">{entry.totalPoints} pts</span>
                 </div>
               ))}
             </div>

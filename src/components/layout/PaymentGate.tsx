@@ -22,7 +22,7 @@ export default function PaymentGate({ children }: { children: React.ReactNode })
           {user.paymentStatus === 'pending' ? (
             <Link
               href="/payment"
-              className="inline-block bg-[#56042C] text-white font-semibold px-6 py-3 rounded-lg hover:bg-[#6d0538] transition-colors"
+              className="inline-block bg-primary text-white font-semibold px-6 py-3 rounded-lg hover:bg-primary-hover transition-colors"
             >
               Ir a Pagar
             </Link>

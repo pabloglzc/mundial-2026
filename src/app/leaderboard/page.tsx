@@ -26,7 +26,7 @@ export default function LeaderboardPage() {
 
         {loading ? (
           <div className="flex justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#56042C]"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
           </div>
         ) : entries.length === 0 ? (
           <div className="bg-white rounded-xl shadow-lg p-12 text-center">
@@ -38,7 +38,7 @@ export default function LeaderboardPage() {
             {!user && (
               <Link
                 href="/register"
-                className="bg-[#56042C] text-white font-semibold px-6 py-3 rounded-lg hover:bg-[#6d0538] transition-colors inline-block"
+                className="bg-primary text-white font-semibold px-6 py-3 rounded-lg hover:bg-primary-hover transition-colors inline-block"
               >
                 Registrarse
               </Link>
@@ -62,7 +62,7 @@ export default function LeaderboardPage() {
                   <tr
                     key={entry.userId}
                     className={`border-b border-gray-100 last:border-0 ${
-                      user && entry.userId === user.id ? 'bg-amber-50' : 'hover:bg-gray-50'
+                      user && entry.userId === user.id ? 'bg-primary/5' : 'hover:bg-gray-50'
                     }`}
                   >
                     <td className="px-4 py-3">
@@ -75,11 +75,11 @@ export default function LeaderboardPage() {
                     <td className="px-4 py-3">
                       <span className="font-medium text-gray-900">{entry.userName}</span>
                       {user && entry.userId === user.id && (
-                        <span className="ml-2 text-xs bg-[#56042C] text-white px-2 py-0.5 rounded-full">Tú</span>
+                        <span className="ml-2 text-xs bg-primary text-white px-2 py-0.5 rounded-full">Tú</span>
                       )}
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <span className="text-lg font-bold text-[#56042C]">{entry.totalPoints}</span>
+                      <span className="text-lg font-bold text-primary">{entry.totalPoints}</span>
                     </td>
                     <td className="px-4 py-3 text-center hidden sm:table-cell">
                       <span className="text-sm text-green-600 font-medium">{entry.exactScores}</span>

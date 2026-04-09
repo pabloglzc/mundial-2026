@@ -109,7 +109,7 @@ function PredictionsContent() {
                 onClick={() => setSelectedMatchday(md)}
                 className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                   selectedMatchday === md
-                    ? 'bg-[#56042C] text-white'
+                    ? 'bg-primary text-white'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
@@ -175,7 +175,7 @@ function PredictionsContent() {
                         max="20"
                         value={score.home}
                         onChange={e => updateScore(match.id, 'home', e.target.value)}
-                        className="w-14 h-10 text-center text-lg font-bold border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#56042C] focus:border-transparent outline-none text-gray-900"
+                        className="w-14 h-10 text-center text-lg font-bold border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-gray-900"
                         placeholder="-"
                       />
                       <span className="text-gray-400 font-bold">-</span>
@@ -185,7 +185,7 @@ function PredictionsContent() {
                         max="20"
                         value={score.away}
                         onChange={e => updateScore(match.id, 'away', e.target.value)}
-                        className="w-14 h-10 text-center text-lg font-bold border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#56042C] focus:border-transparent outline-none text-gray-900"
+                        className="w-14 h-10 text-center text-lg font-bold border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-gray-900"
                         placeholder="-"
                       />
                     </>
@@ -204,7 +204,7 @@ function PredictionsContent() {
                     <button
                       onClick={() => handleSave(match.id)}
                       disabled={saving === match.id || score.home === '' || score.away === ''}
-                      className="bg-[#56042C] hover:bg-[#6d0538] text-white text-sm font-medium px-3 py-1.5 rounded-lg transition-colors disabled:opacity-30"
+                      className="bg-primary hover:bg-primary-hover text-white text-sm font-medium px-3 py-1.5 rounded-lg transition-colors disabled:opacity-30"
                     >
                       {saving === match.id ? '...' : savedMsg === match.id ? 'Listo!' : 'Guardar'}
                     </button>

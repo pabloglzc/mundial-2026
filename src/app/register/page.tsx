@@ -63,7 +63,7 @@ export default function RegisterPage() {
                 value={name}
                 onChange={e => setName(e.target.value)}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#56042C] focus:border-transparent outline-none text-gray-900"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-gray-900"
                 placeholder="Tu nombre"
               />
             </div>
@@ -74,7 +74,7 @@ export default function RegisterPage() {
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#56042C] focus:border-transparent outline-none text-gray-900"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-gray-900"
                 placeholder="tu@email.com"
               />
             </div>
@@ -85,7 +85,7 @@ export default function RegisterPage() {
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#56042C] focus:border-transparent outline-none text-gray-900"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-gray-900"
                 placeholder="Mínimo 6 caracteres"
               />
             </div>
@@ -96,14 +96,14 @@ export default function RegisterPage() {
                 value={confirmPassword}
                 onChange={e => setConfirmPassword(e.target.value)}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#56042C] focus:border-transparent outline-none text-gray-900"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-gray-900"
                 placeholder="Repite tu contraseña"
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#56042C] text-white font-semibold py-3 rounded-lg hover:bg-[#6d0538] transition-colors disabled:opacity-50"
+              className="w-full bg-primary text-white font-semibold py-3 rounded-lg hover:bg-primary-hover transition-colors disabled:opacity-50"
             >
               {loading ? 'Creando cuenta...' : 'Registrarse'}
             </button>
@@ -111,7 +111,7 @@ export default function RegisterPage() {
 
           <p className="text-center text-gray-600 text-sm mt-6">
             ¿Ya tienes cuenta?{' '}
-            <Link href="/login" className="text-[#56042C] font-semibold hover:underline">
+            <Link href="/login" className="text-primary font-semibold hover:underline">
               Inicia sesión
             </Link>
           </p>

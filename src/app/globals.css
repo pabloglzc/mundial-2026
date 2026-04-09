@@ -8,6 +8,13 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: #2A398D;
+  --color-primary-hover: #1E2A6A;
+  --color-brand-green: #3CAC3B;
+  --color-brand-green-hover: #2E8A2D;
+  --color-brand-red: #E61D25;
+  --color-brand-gray-light: #D1D4D1;
+  --color-brand-gray-dark: #474A4A;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

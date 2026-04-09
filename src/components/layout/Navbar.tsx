@@ -9,7 +9,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <nav className="bg-[#56042C] text-white shadow-lg">
+    <nav className="bg-primary text-white shadow-lg">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-2 font-bold text-xl">
@@ -19,24 +19,24 @@ export default function Navbar() {
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-6">
-            <Link href="/leaderboard" className="hover:text-amber-300 transition-colors">
+            <Link href="/leaderboard" className="hover:text-brand-green transition-colors">
               Tabla de Posiciones
             </Link>
             {user ? (
               <>
-                <Link href="/dashboard" className="hover:text-amber-300 transition-colors">
+                <Link href="/dashboard" className="hover:text-brand-green transition-colors">
                   Dashboard
                 </Link>
-                <Link href="/predictions" className="hover:text-amber-300 transition-colors">
+                <Link href="/predictions" className="hover:text-brand-green transition-colors">
                   Predicciones
                 </Link>
                 {user.role === 'admin' && (
-                  <Link href="/admin" className="hover:text-amber-300 transition-colors">
+                  <Link href="/admin" className="hover:text-brand-green transition-colors">
                     Admin
                   </Link>
                 )}
                 <div className="flex items-center gap-3 ml-4">
-                  <span className="text-sm text-amber-200">{user.name}</span>
+                  <span className="text-sm text-brand-green/80">{user.name}</span>
                   <button
                     onClick={logout}
                     className="bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded text-sm transition-colors"
@@ -49,13 +49,13 @@ export default function Navbar() {
               <div className="flex gap-3">
                 <Link
                   href="/login"
-                  className="hover:text-amber-300 transition-colors"
+                  className="hover:text-brand-green transition-colors"
                 >
                   Iniciar Sesión
                 </Link>
                 <Link
                   href="/register"
-                  className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-4 py-1.5 rounded transition-colors"
+                  className="bg-brand-green hover:bg-brand-green-hover text-white font-semibold px-4 py-1.5 rounded transition-colors"
                 >
                   Registrarse
                 </Link>
@@ -81,32 +81,32 @@ export default function Navbar() {
         {/* Mobile Nav */}
         {menuOpen && (
           <div className="md:hidden pb-4 space-y-2">
-            <Link href="/leaderboard" className="block py-2 hover:text-amber-300" onClick={() => setMenuOpen(false)}>
+            <Link href="/leaderboard" className="block py-2 hover:text-brand-green" onClick={() => setMenuOpen(false)}>
               Tabla de Posiciones
             </Link>
             {user ? (
               <>
-                <Link href="/dashboard" className="block py-2 hover:text-amber-300" onClick={() => setMenuOpen(false)}>
+                <Link href="/dashboard" className="block py-2 hover:text-brand-green" onClick={() => setMenuOpen(false)}>
                   Dashboard
                 </Link>
-                <Link href="/predictions" className="block py-2 hover:text-amber-300" onClick={() => setMenuOpen(false)}>
+                <Link href="/predictions" className="block py-2 hover:text-brand-green" onClick={() => setMenuOpen(false)}>
                   Predicciones
                 </Link>
                 {user.role === 'admin' && (
-                  <Link href="/admin" className="block py-2 hover:text-amber-300" onClick={() => setMenuOpen(false)}>
+                  <Link href="/admin" className="block py-2 hover:text-brand-green" onClick={() => setMenuOpen(false)}>
                     Admin
                   </Link>
                 )}
-                <button onClick={() => { logout(); setMenuOpen(false); }} className="block py-2 text-amber-200">
+                <button onClick={() => { logout(); setMenuOpen(false); }} className="block py-2 text-brand-green/80">
                   Salir ({user.name})
                 </button>
               </>
             ) : (
               <>
-                <Link href="/login" className="block py-2 hover:text-amber-300" onClick={() => setMenuOpen(false)}>
+                <Link href="/login" className="block py-2 hover:text-brand-green" onClick={() => setMenuOpen(false)}>
                   Iniciar Sesión
                 </Link>
-                <Link href="/register" className="block py-2 text-amber-400 font-semibold" onClick={() => setMenuOpen(false)}>
+                <Link href="/register" className="block py-2 text-brand-green font-semibold" onClick={() => setMenuOpen(false)}>
                   Registrarse
                 </Link>
               </>

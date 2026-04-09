@@ -89,7 +89,7 @@ function AdminMatchesContent() {
                   ...prev,
                   [match.id]: { ...prev[match.id], home: e.target.value }
                 }))}
-                className="w-14 h-10 text-center text-lg font-bold border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-[#56042C] text-gray-900"
+                className="w-14 h-10 text-center text-lg font-bold border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-primary text-gray-900"
                 placeholder="-"
               />
               <span className="text-gray-400 font-bold">-</span>
@@ -101,7 +101,7 @@ function AdminMatchesContent() {
                   ...prev,
                   [match.id]: { ...prev[match.id], away: e.target.value }
                 }))}
-                className="w-14 h-10 text-center text-lg font-bold border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-[#56042C] text-gray-900"
+                className="w-14 h-10 text-center text-lg font-bold border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-primary text-gray-900"
                 placeholder="-"
               />
 
