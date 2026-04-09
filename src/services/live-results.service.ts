@@ -19,6 +19,17 @@ function todayDateString(): string {
   return d.toISOString().split('T')[0];
 }
 
+// Check if a UTC date string falls within "today" in the user's local timezone
+function isToday(utcDate: string): boolean {
+  const matchDate = new Date(utcDate);
+  const now = new Date();
+  return (
+    matchDate.getFullYear() === now.getFullYear() &&
+    matchDate.getMonth() === now.getMonth() &&
+    matchDate.getDate() === now.getDate()
+  );
+}
+
 function mapMatch(m: any, competition?: string): LiveMatch {
   return {
     id: m.id,
@@ -97,9 +108,10 @@ export async function fetchTodayAllCompetitions(): Promise<LiveMatch[]> {
       return [];
     }
 
-    return data.matches.map((m: any) =>
-      mapMatch(m, m.competition?.name || '')
-    );
+    // Filter to only matches that are actually today in user's local timezone
+    return data.matches
+      .filter((m: any) => isToday(m.utcDate))
+      .map((m: any) => mapMatch(m, m.competition?.name || ''));
   } catch {
     return [];
   }
